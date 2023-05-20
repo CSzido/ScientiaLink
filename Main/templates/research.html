@@ -1,0 +1,107 @@
+{%load static%}
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> ScientiaLink | {{research.title}} </title>
+		<meta charset = "utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel = "stylesheet" href="{%static 'css/style.css'%}">
+		<link rel = "icon" href="{%static 'images/logo.ico'%}">
+		<style>
+			a{
+				text-decoration:none;
+			}
+		</style>
+	</head>
+	
+	<body>
+		<!-- a header that contains the info of the user on the left and an edit button on the right -->
+		<div class="header">
+			<div class="profile-info">
+				<div>
+					<img src="{{user.profile.image.url}}">
+				</div>
+
+				<div>
+					<h2> {{user.profile.full_name}} </h2>
+					<!-- inline displayed ul withuot list-style -->
+					<ul class = "interests">
+						{%for i in user.profile.interests.all%}
+						<a href="/fields/{{i.id}}">
+							<li>{{i.interest}}</li>
+						</a>
+						{%endfor%}
+					</ul>
+				</div>
+			</div>
+			<button class="btn" id="edit_btn">🖊 Edit</button>
+		</div>
+		<!-- researches are displayed in their container at the right side of the page -->
+		<div class="researches">
+			<iframe src="{{research.doc}}" class="search-file"></iframe>
+		</div>		
+	<!-- scientists with similar interests | displayed on the right side of the page-->
+	<div class="accounts">
+		<div class="account">
+			<div>
+				<h2> {{research.title}} </h2>
+				<h3> issue : {{research.issue}} </h3>
+				<p> Field : <a href="/fields/{{research.field.id}}"> {{research.field}} </a> </p>
+			</div>
+		</div>
+		<hr>
+		{%for i in owners%}
+		<div class="account">
+			<div class="picture">
+				<img src="{{i.profile.image.url}}">
+			</div>
+			<div>
+				<h2> {{i.profile.full_name}} </h2>
+				<!-- inline displayed ul withuot list-style -->
+				Email : <a href="mailto:{{i.email}}"> {{i.email}} </a> <br>
+				<ul class = "interests">
+					{%for j in i.profile.interests.all%}
+						<a href = "/fields/{{j.id}}"><li>{{j.interest}}</li></a>
+					{%endfor%}
+				</ul>
+				{%if i != user%}
+					{%if not i.profile in user.profile.following.all%}
+						<div style="clear:both;">
+							<a href="/accounts/{{i.profile.id}}/follow"><button class="btn" style="width:100%;margin-top:5px;margin-bottom:5px;cursor:pointer"> + follow </button></a>
+						</div>
+					{%else%}
+						<div style="clear:both;">
+							<a href="/accounts/{{i.profile.id}}/follow"><button class="btn" style="width:100%;margin-top:5px;margin-bottom:5px;cursor:pointer;background:red"> - unfollow </button></a>
+						</div>
+					{%endif%}
+				{%else%}
+				<a href="/profile"><button class="btn" style="width:100%;margin-top:5px;"> Show profile </button></a>
+				{%endif%}
+			</div>
+		</div>
+		{%endfor%}
+		<div style="clear:both;">
+			<a href="/research/{{research.id}}/report"><button class="btn" style="width:100%;margin-top:5px;margin-bottom:5px;cursor:pointer;background:red"> Report Research </button></a>
+		</div>
+	</div>
+	<div class="background" id="editform">
+			<div class="form-container">
+			  <h2>Edit Profile</h2>
+			  <form method="post" enctype="multipart/form-data">
+				  {%csrf_token%}
+				  <label for="current-job">Full Name</label>
+				  {{form.full_name}}
+
+				  <label for="full-name">Profile Picture</label>
+				  {{form.image}}
+
+				  <label for="interests">Interests</label>
+				  {{form.interests}}
+
+				  <input type="submit" value="Save">
+			  </form>
+			</div>
+		</div>
+		<script src="{%static 'js/main.js'%}"></script>
+	</body>
+</html>

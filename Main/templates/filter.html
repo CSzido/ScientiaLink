@@ -1,0 +1,94 @@
+{%load static%}
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> ScientiaLink | {{field.interest}}</title>
+		<meta charset = "utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel = "stylesheet" href="{%static 'css/style.css'%}">
+		<link rel = "icon" href="{%static 'images/logo.ico'%}">
+		<style>
+			a{
+				text-decoration:none;
+			}
+		</style>
+	</head>
+	
+	<body>
+		<!-- a header that contains the info of the user on the left and an edit button on the right -->
+		<div class="header">
+			<div class="profile-info">
+				<div>
+					<img src="{{user.profile.image.url}}">
+				</div>
+				
+				<div>
+					<h2> {{user.profile.full_name}} </h2>
+					<!-- inline displayed ul withuot list-style -->
+					<ul class = "interests">
+						{%for i in user.profile.interests.all%}
+						<a href="/fields/{{i.id}}">
+							<li>{{i.interest}}</li>
+						</a>
+						{%endfor%}
+					</ul>
+				</div>
+			</div>
+			<button class="btn" id="edit_btn">🖊 Edit</button>
+		</div>
+		<!-- researches are displayed in their container at the right side of the page -->
+		<div class="researches">
+		<div class="researches-header"> 
+		<form method="get" class="search">
+			<button class = "search-btn" type="submit"> 🔎 </button>
+			{{filter.form.title}}
+			<a href="/researches/add"><button type="button" class="add-new">
+				+
+			</button></a>
+		</form>
+		</div>
+			{%for i in researches%}
+			<a style="color:black;text-decoration:none;" href="research/{{i.id}}">
+				<div class="research">
+					<h2> {{i.title}}</h2>
+					<h4> {{i.field.interest}} </h4>
+				</div>
+			</a>
+			{%endfor%}
+		</div>		
+	<!-- scientists with similar interests | displayed on the right side of the page-->
+
+		<div class="accounts">
+			<h2>{{field.interest}} related Researches</h2>
+			<hr>
+			<a href="/search">
+				<h2>
+					See all
+				</h2>
+			</a>
+		</div>
+		<div class="background" id="editform">
+			<div class="form-container">
+			  <h2>Edit Profile</h2>
+			  <form method="post" enctype="multipart/form-data">
+				  {%csrf_token%}
+				  <label for="current-job">Full Name</label>
+				  {{form.full_name}}
+
+				  <label for="full-name">Profile Picture</label>
+				  {{form.image}}
+
+				  <label for="interests">Interests</label>
+				  {{form.interests}}
+
+				  <input type="submit" value="Save">
+			  </form>
+			</div>
+		</div>
+		<script src="{%static 'js/main.js'%}"></script>
+		<script>
+			document.getElementById("id_title").classList.add('search_input');
+			document.getElementById("id_title").placeholder = 'Search SciantiaLink';
+		</script>
+	</body>
+</html>

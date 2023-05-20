@@ -1,0 +1,1 @@
+web: gunicorn scientialink.wsgi --log-file -
